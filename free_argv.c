@@ -1,15 +1,17 @@
-#include <stddef.h>
-#include <stdlib.h>
+#include "main.h"
 
-void free_argv(int argc, char ***argv)
+void free_argv(data_t *data)
 {
 	int i;
 
-	for (i = 0; i < argc; i++)
+	if (data->argv != NULL)
 	{
-		free((*argv)[i]);
-		(*argv)[i] = NULL;
+		for (i = 0; i < data->argc; i++)
+		{
+			free(data->argv[i]);
+			data->argv[i] = NULL;
+		}
+		free(data->argv);
+		data->argv = NULL;
 	}
-	free(*argv);
-	*argv = NULL;
 }

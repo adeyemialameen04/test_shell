@@ -1,0 +1,51 @@
+void execute_mul_cmds(data_t *data, char *cmds)
+{
+	char *saveptr;
+	char *curr_cmd = strtok_r(cmds, ";", &saveptr);
+	char *cmd_cpy;
+
+	while (curr_cmd)
+	{
+		cmd_cpy = strdup(curr_cmd);
+
+		data->cmd = strdup(cmd_cpy);
+		tokenize_command(data);
+
+		if (data->argv != NULL && data->argv[0] != NULL)
+		{
+			execute_cmd(data);
+		}
+
+		free(cmd_cpy);
+		clean(data);
+		curr_cmd = strtok_r(NULL, ";", &saveptr);
+	}
+
+	free(cmd_cpy);
+}
+
+
+void execute_mul_cmds(data_t *data, char *cmds)
+{
+	char *saveptr;
+	char *curr_cmd = strtok_r(cmds, ";", &saveptr);
+
+	while (curr_cmd)
+	{
+		print(curr_cmd, STDOUT_FILENO);
+		print("\n", STDOUT_FILENO);
+		data->cmd = curr_cmd;
+
+		tokenize_command(data);
+
+		if (data->argv != NULL && data->argv[0] != NULL)
+		{
+			execute_cmd(data);
+		}
+
+		curr_cmd = strtok_r(NULL, ";", &saveptr);
+	}
+}
+
+
+Code duplication: The code to get the next token from the command string is duplicated. You could avoid this by using a do-while loop.
