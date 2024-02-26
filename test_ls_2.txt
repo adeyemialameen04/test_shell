@@ -1,0 +1,31 @@
+/bin/ls 
+/bin/ls 
+
+
+void _exec_mul_cmds(data_t *data)
+{
+	char *token;
+	char *cmd_cpy = dup_cmd_str(data->cmd);
+	if (cmd_cpy == NULL)
+	{
+		perror("_strdup failed");
+	}
+
+	token = tokenize_command(cmd_cpy, ";");
+
+	while (token != NULL)
+	{
+		char *current_command = _strdup(token); /*Duplicate the token to avoid modification of original string*/
+		if (current_command == NULL)
+		{
+			perror("_strdup failed");
+			exit(EXIT_FAILURE);
+		}
+
+		data->cmd = current_command;	/*Update the data structure with the current command*/
+		_tokenize_command(data, " \n"); /*Tokenize the current command*/
+		execute_cmd(data);				/*Execute the current command*/
+
+		token = tokenize_command(NULL, ";"); /*Move to the next command*/
+	}
+}

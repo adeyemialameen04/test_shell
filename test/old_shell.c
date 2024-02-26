@@ -28,7 +28,7 @@ int main(void)
 			fflush(stdout);
 		}
 
-		read = my_getline(&data.cmd, &n, stdin);
+		read = _read_line(&data.cmd, &n, stdin);
 		if (read <= 0)
 		{
 			if (read == 0)
@@ -42,12 +42,12 @@ int main(void)
 			}
 		}
 
-		tokenize_command(&data);
+		_tokenize_command(&data);
 
 		if (data.argv != NULL && data.argv[0] != NULL)
 		{
 
-			if (strcmp(data.argv[0], "env") == 0)
+			if (_strcmp(data.argv[0], "env") == 0)
 			{
 				printenv();
 			}
@@ -57,13 +57,13 @@ int main(void)
 			}
 		}
 
-		free_argv(&data);
+		_free_argv(&data);
 		free(data.cmd);
 		data.cmd = NULL;
 		data.argv = NULL;
 	}
 
-	free_argv(&data);
+	_free_argv(&data);
 	free(data.cmd);
 	return (data.exit_status);
 }

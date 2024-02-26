@@ -1,0 +1,72 @@
+#include "main.h"
+
+void count_cmds(data_t *data, char *token, char *delim);
+void alloc_cmds(data_t *data);
+void copy_cmds(data_t *data, char *token, char *delim);
+
+void _split_command(data_t *data, char *delim)
+{
+	char *cmd_cpy;
+	char *token;
+
+	data->cmd[strcspn(data->cmd, "\n")] = '\0';
+	cmd_cpy = dup_cmd_str(data->cmd);
+	if (cmd_cpy == NULL)
+	{
+		perror("_strdup failed");
+		exit(EXIT_FAILURE);
+	}
+
+	token = tokenize_command(cmd_cpy, delim);
+
+	count_cmds(data, token, delim);
+	alloc_cmds(data);
+
+	free(cmd_cpy);
+
+	/* Copy the commands into the commands array */
+	token = tokenize_command(data->cmd, delim);
+	copy_cmds(data, token, delim);
+}
+
+void count_cmds(data_t *data, char *token, char *delim)
+{
+	data->cmds_count = 0;
+
+	/* Count the number of commands */
+	while (token)
+	{
+		data->cmds_count++;
+		token = tokenize_command(NULL, delim);
+	}
+}
+
+void alloc_cmds(data_t *data)
+{
+	/* Allocate memory for the commands array */
+	data->cmds = malloc((data->cmds_count + 1) * sizeof(char *));
+	if (data->cmds == NULL)
+	{
+		perror("malloc failed");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void copy_cmds(data_t *data, char *token, char *delim)
+{
+	int i = 0;
+
+	while (token)
+	{
+		data->cmds[i] = _strdup(token);
+		if (data->cmds[i] == NULL)
+		{
+			perror("_strdup failed");
+			exit(EXIT_FAILURE);
+		}
+		i++;
+		token = tokenize_command(NULL, delim);
+	}
+
+	data->cmds[i] = NULL;
+}

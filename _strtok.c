@@ -1,6 +1,12 @@
 #include "main.h"
 
-char *div_str(char *str, const char *delim)
+/**
+ * _div_str - A custom strtok function
+ * @str: The string to be tokenized.
+ * @delim: Delimeter.
+ * Return: The pointer to the next string if a token is found.
+ */
+char *_div_str(char *str, const char *delim)
 {
 	static char *buffer;
 	char *token_start;

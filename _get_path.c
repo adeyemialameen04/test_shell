@@ -1,13 +1,17 @@
 #include "main.h"
 
-char *get_path(void)
+/**
+ * _get_path - Function to get the PATH variable from environ.
+ * Return: the path or NULL when environ is NULL.
+ */
+char *_get_path(void)
 {
 	char **env_ptr;
 	char *environ_err = "Error: environ is NULL\n";
 
 	if (environ == NULL)
 	{
-		print(environ_err, STDERR_FILENO);
+		_print(environ_err, STDERR_FILENO);
 		return (NULL);
 	}
 
@@ -17,7 +21,7 @@ char *get_path(void)
 	{
 		if (strncmp(*env_ptr, "PATH=", 5) == 0)
 		{
-			return (strdup(*env_ptr + 5));
+			return (_strdup(*env_ptr + 5));
 		}
 		env_ptr++;
 	}

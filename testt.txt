@@ -6,10 +6,10 @@ void execute_mul_cmds(data_t *data, char *cmds)
 
 	while (curr_cmd)
 	{
-		cmd_cpy = strdup(curr_cmd);
+		cmd_cpy = _strdup(curr_cmd);
 
-		data->cmd = strdup(cmd_cpy);
-		tokenize_command(data);
+		data->cmd = _strdup(cmd_cpy);
+		_tokenize_command(data);
 
 		if (data->argv != NULL && data->argv[0] != NULL)
 		{
@@ -32,11 +32,11 @@ void execute_mul_cmds(data_t *data, char *cmds)
 
 	while (curr_cmd)
 	{
-		print(curr_cmd, STDOUT_FILENO);
-		print("\n", STDOUT_FILENO);
+		_print(curr_cmd, STDOUT_FILENO);
+		_print("\n", STDOUT_FILENO);
 		data->cmd = curr_cmd;
 
-		tokenize_command(data);
+		_tokenize_command(data);
 
 		if (data->argv != NULL && data->argv[0] != NULL)
 		{
@@ -49,3 +49,67 @@ void execute_mul_cmds(data_t *data, char *cmds)
 
 
 Code duplication: The code to get the next token from the command string is duplicated. You could avoid this by using a do-while loop.
+
+
+
+
+
+
+int _tokenize_command(data_t *data)
+{
+	char *cmd_cpy;
+	char *delim = " \n";
+	char *token;
+	int i = 0;
+
+	data->cmd[strcspn(data->cmd, "\n")] = '\0';
+	cmd_cpy = _strdup(data->cmd);
+	token = _div_str(cmd_cpy, delim);
+
+	if (cmd_cpy == NULL)
+	{
+		perror("_strdup failed");
+		exit(EXIT_FAILURE);
+	}
+
+	data->argc = 0;
+
+	while (token)
+	{
+		(data->argc)++;
+		token = _div_str(NULL, delim);
+	}
+
+	free(cmd_cpy);
+
+	data->argv = malloc(((data->argc) + 1) * sizeof(char *));
+	if (data->argv == NULL)
+	{
+		perror("malloc failed");
+		return (-1);
+	}
+
+	token = _div_str(data->cmd, delim);
+
+	while (token)
+	{
+		data->argv[i] = _strdup(token);
+		if (data->argv[i] == NULL)
+		{
+			perror("_strdup failed");
+			_free_argv(data);
+			return (-1);
+		}
+		i++;
+		token = _div_str(NULL, delim);
+	}
+
+	data->argv[i] = NULL;
+
+	return (0);
+}
+
+
+		_free_argv(data);
+		_free_cmds(data);
+		free(data->cmd);

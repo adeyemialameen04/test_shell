@@ -1,6 +1,15 @@
 #include "main.h"
 
-char *find_command(char *cmd, char *ph)
+char *_find_command(char *cmd, char *ph);
+/**
+ * _find_command - This function checks for the command in the PATH varible and
+ *					checks if its an executable
+ * @cmd: command to be checked for
+ * @ph: PATH
+ * Return: NULL is the command is not found, full_path is the
+ *			command is found and executable
+ */
+char *_find_command(char *cmd, char *ph)
 {
 	char *ph_cpy;
 	char *ph_dir;
@@ -11,11 +20,10 @@ char *find_command(char *cmd, char *ph)
 	if (ph == NULL)
 		return (NULL);
 
-	ph_cpy = strdup(ph);
+	ph_cpy = _strdup(ph);
 	if (ph_cpy == NULL)
 	{
-		perror("strdup failed");
-		exit(EXIT_FAILURE);
+		perror("_strdup failed");
 	}
 
 	ph_dir = strtok_r(ph_cpy, ":", &saveptr);

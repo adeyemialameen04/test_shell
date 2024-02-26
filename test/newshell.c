@@ -40,7 +40,7 @@ int main(void)
 		clean(&data);
 	}
 
-	free_argv(&data);
+	_free_argv(&data);
 	free(data.cmd);
 	free(data.cmd);
 	return (data.exit_status);
@@ -51,7 +51,7 @@ void handle_read_and_tok(data_t *data)
 	ssize_t read;
 	size_t n = 0;
 
-	read = my_getline(&data->cmd, &n, stdin);
+	read = _read_line(&data->cmd, &n, stdin);
 	if (read <= 0)
 	{
 		if (read == 0 || read < 0)
@@ -61,7 +61,7 @@ void handle_read_and_tok(data_t *data)
 		}
 	}
 
-	tokenize_command(data);
+	_tokenize_command(data);
 }
 
 void execute_cmd(data_t *data)
@@ -79,7 +79,7 @@ void execute_cmd(data_t *data)
 
 void clean(data_t *data)
 {
-	free_argv(data);
+	_free_argv(data);
 	free(data->cmd);
 	data->cmd = NULL;
 	data->argv = NULL;
@@ -89,6 +89,6 @@ void sigint_handler(int signo)
 {
 	if (signo == SIGINT)
 	{
-		print("\n$ ", STDOUT_FILENO);
+		_print("\n$ ", STDOUT_FILENO);
 	}
 }

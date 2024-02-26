@@ -15,7 +15,14 @@ int _isdigit(int c)
 		return (0);
 }
 
-int is_num(char *str)
+/**
+ * _is_num - Checks if a string is a digit.
+ *
+ * @str: The string to be checked.
+ *
+ * Return: 1 if the string is a digit, 0 otherwise.
+ */
+int _is_num(char *str)
 {
 	while (*str != '\0')
 	{
