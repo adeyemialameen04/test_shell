@@ -2,7 +2,7 @@
 
 void count_cmds(data_t *data, char *token);
 void alloc_cmds(data_t *data);
-void copy_cmds(data_t *data, char *token);
+void copy_cmds(data_t *data, char *token, char *nxt_operator);
 
 /**
  * _split_command - Function to tokenize the cmd into argv array.
@@ -10,10 +10,10 @@ void copy_cmds(data_t *data, char *token);
  * @delim: Delimiter.
  * Return: None.
  */
-void _split_command(data_t *data, char *delim)
+void _split_command(data_t *data)
 {
 	char *cmd_cpy, *cmd_coppy;
-	char *token;
+	char *token, *nxt_operator;
 
 	/*Ensure cmd is null-terminated*/
 	data->cmd[strcspn(data->cmd, "\n")] = '\0';
@@ -26,7 +26,7 @@ void _split_command(data_t *data, char *delim)
 		exit(EXIT_FAILURE);
 	}
 
-	token = tokenize_command(cmd_cpy, delim);
+	token = strtok_r(cmd_cpy, ";&&||", &nxt_operator);
 
 	count_cmds(data, token);
 	alloc_cmds(data);
@@ -39,8 +39,8 @@ void _split_command(data_t *data, char *delim)
 		exit(EXIT_FAILURE);
 	}
 
-	token = tokenize_command(cmd_coppy, delim);
-	copy_cmds(data, token);
+	token = strtok_r(cmd_coppy, ";&&||", &nxt_operator);
+	copy_cmds(data, token, nxt_operator);
 
 	free(cmd_coppy);
 }
@@ -58,9 +58,8 @@ void count_cmds(data_t *data, char *token)
 
 void alloc_cmds(data_t *data)
 {
-
 	/*Allocate memory for the commands array*/
-	data->cmds = malloc((data->cmds_count + 1) * sizeof(char *));
+	data->cmds = malloc((data->cmds_count + 1) * sizeof(command_t));
 	if (data->cmds == NULL)
 	{
 		perror("malloc failed");
@@ -68,23 +67,25 @@ void alloc_cmds(data_t *data)
 	}
 }
 
-void copy_cmds(data_t *data, char *token)
+void copy_cmds(data_t *data, char *token, char *nxt_operator)
 {
 	int i = 0;
 
 	/*Copy the commands into the allocated memory*/
 	while (token != NULL)
 	{
-		data->cmds[i] = strdup(token);
-		if (data->cmds[i] == NULL)
+		data->cmds[i].command = strdup(token);
+		data->cmds[i].operator= nxt_operator ? strdup(nxt_operator) : NULL;
+		if (data->cmds[i].command == NULL)
 		{
 			perror("_strdup failed");
 			_free_cmds(data);
 			exit(EXIT_FAILURE);
 		}
 		i++;
-		token = tokenize_command(NULL, ";");
+		token = strtok_r(NULL, ";&&||", &nxt_operator);
 	}
 
-	data->cmds[i] = NULL;
+	data->cmds[i].command = NULL;
+	data->cmds[i].operator= NULL;
 }

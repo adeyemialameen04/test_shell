@@ -1,7 +1,5 @@
 #include "main.h"
 
-void _exec_mul_cmds(data_t *data);
-
 /**
  * initialize_data_struct - Initialize data struct.
  * Return: the data_t struct.
@@ -33,6 +31,7 @@ data_t initialize_data_struct(void)
 void shell_loop(data_t *data)
 {
 	int i;
+	int status = 0;
 
 	while (1)
 	{
@@ -44,11 +43,14 @@ void shell_loop(data_t *data)
 
 		handle_read_and_tok(data);
 
-		for (i = 0; data->cmds != NULL && data->cmds[i] != NULL; i++)
+		for (i = 0; i < data->cmds_count; i++)
 		{
-			data->cmd = data->cmds[i];
-			_tokenize_command(data, " \n");
-			execute_cmd(data);
+			if (i == 0 || (strcmp(data->cmds[i - 1].operator, "&&") == 0 && status == 0) || (strcmp(data->cmds[i - 1].operator, "||") == 0 && status != 0))
+			{
+				data->cmd = data->cmds[i].command;
+				_tokenize_command(data, " \n");
+				status = execute_cmd(data);
+			}
 			_free_argv(data);
 		}
 		_free_cmds(data);
@@ -81,7 +83,7 @@ void handle_read_and_tok(data_t *data)
 		exit(data->exit_status);
 	}
 
-	_split_command(data, ";");
+	_split_command(data);
 	free(data->cmd);
 	data->cmd = NULL;
 }
@@ -93,19 +95,20 @@ void handle_read_and_tok(data_t *data)
  * @data: The data struct.
  * Return: None.
  */
-void execute_cmd(data_t *data)
+int execute_cmd(data_t *data)
 {
 	void (*builting_fn)(data_t *data);
 
 	if (data->argv[0] == NULL)
-		return;
+		return 0;
 
 	builting_fn = _get_builtin_fn(data->argv[0]);
 
 	if (builting_fn != NULL)
 	{
 		builting_fn(data);
+		return data->exit_status;
 	}
 	else
-		_exec_command(data);
+		return _exec_command(data);
 }

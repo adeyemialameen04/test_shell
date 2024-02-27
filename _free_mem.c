@@ -49,17 +49,16 @@ void _free_cmd(data_t *data)
  */
 void _free_cmds(data_t *data)
 {
-	if (data->cmds != NULL)
+	int i;
+
+	if (data->cmds == NULL)
+		return;
+
+	for (i = 0; i < data->cmds_count; i++)
 	{
-		int i = 0;
-
-		for (i = 0; i < data->cmds_count; i++)
-		{
-			free(data->cmds[i]);
-			data->cmds[i] = NULL;
-		}
-
-		free(data->cmds);
-		data->cmds = NULL;
+		free(data->cmds[i].command);
+		free(data->cmds[i].operator);
 	}
+	free(data->cmds);
+	data->cmds = NULL;
 }

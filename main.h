@@ -15,17 +15,22 @@
 extern char **environ;
 
 /*STRUCTS*/
+typedef struct command_s
+{
+	char *command;
+	char *operator;
+} command_t;
+
 typedef struct data
 {
+	char *prompt;
 	int argc;
 	char **argv;
 	char *cmd;
-	char **cmds;
+	command_t *cmds;
 	int cmds_count;
 	int exit_status;
 	char **environ;
-	int cmds_alloc;
-	char *prompt;
 } data_t;
 
 typedef struct builtin_struct
@@ -39,7 +44,7 @@ int _shell(void);
 /*SHELL HELPER FUNCTIONS*/
 void sigint_handler(int signo);
 void handle_read_and_tok(data_t *data);
-void execute_cmd(data_t *data);
+int execute_cmd(data_t *data);
 void _clean(data_t *data);
 void shell_loop(data_t *data);
 data_t initialize_data_struct(void);
@@ -54,7 +59,7 @@ void _free_cmd(data_t *data);
 void _free_argv(data_t *data);
 void _free_cmds(data_t *data);
 
-void _split_command(data_t *data, char *delim);
+void _split_command(data_t *data);
 
 /*INT HELPER FUNCTIONS*/
 int _isdigit(int c);
